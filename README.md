@@ -131,30 +131,29 @@ It appears, the headlines are wrapped in an anchor tag that links to the discuss
 Create a new reddit-scraper.js file and add the following code into it:
 
     // reddit-scraper.js
-    
     const cheerio = require('cheerio');
     const puppeteer = require('puppeteer');
-    
-    const url = 'https://www.reddit.com/r/news/';
-    
+
+    const url = "https://www.reddit.com/r/news";
+
     puppeteer
       .launch()
       .then(browser => browser.newPage())
       .then(page => {
-        return page.goto(url).then(function() {
-          return page.content();
-        });
+          return page.goto(url).then(function() {
+              return page.content();
+          });
       })
       .then(html => {
-        const $ = cheerio.load(html);
-        const newsHeadlines = [];
-        $('a[href*="/r/news/comments"] > h2').each(function() {
-          newsHeadlines.push({
-            title: $(this).text(),
+          const $ = cheerio.load(html);
+          const newsHeadlines = [];
+          $('a[href*="/r/news/comments/"] > div > h3').each(function() {
+              newsHeadlines.push({
+                  title: $(this).text(),
+              });
           });
-        });
-    
-        console.log(newsHeadlines);
+
+          console.log(newsHeadlines);
       })
       .catch(console.error);
 This code launches a puppeteer instance, navigates to the provided URL, and returns the HTML content after all the JavaScript on the page has bee executed. We then use Cheerio as before to parse and extract the desired data from the HTML string.
